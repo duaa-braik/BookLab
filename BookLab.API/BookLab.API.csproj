@@ -4,10 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>6b90fb6b-4301-4010-9e52-1e7179720f45</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BookLab.Application\BookLab.Application.csproj" />
+    <ProjectReference Include="..\BookLab.Infrastructure\BookLab.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
