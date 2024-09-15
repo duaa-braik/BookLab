@@ -7,6 +7,10 @@ namespace BookLab.Infrastructure
     {
         public DbSet<User> User { get; set; }
 
+        public DbSet<Admin> Admin { get; set; }
+
+        public DbSet<Customer> Customer { get; set; }
+
         public DbSet<Book> Book { get; set; }
 
         public DbSet<Author> Author { get; set; }
@@ -62,6 +66,52 @@ namespace BookLab.Infrastructure
             configureOrderTable(modelBuilder);
 
             configurePublisherTable(modelBuilder);
+
+            configureAdminTable(modelBuilder);
+
+            configureCustomerTable(modelBuilder);
+        }
+
+        private static void configureCustomerTable(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Customer>()
+                .Property(c => c.FirstName)
+                .HasMaxLength(20);
+
+            modelBuilder.Entity<Customer>()
+                .Property(c => c.LastName)
+                .HasMaxLength(20);
+
+            modelBuilder.Entity<Customer>()
+                .Property(c => c.PhoneNumber)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.User)
+                .WithOne()
+                .HasForeignKey<Customer>(c => c.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        private static void configureAdminTable(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Admin>()
+                .Property(a => a.FirstName)
+                .HasMaxLength(20);
+
+            modelBuilder.Entity<Admin>()
+                .Property(a => a.LastName)
+                .HasMaxLength(20);
+
+            modelBuilder.Entity<Admin>()
+                .Property(a => a.PhoneNumber)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<Admin>()
+                .HasOne(a => a.User)
+                .WithOne()
+                .HasForeignKey<Admin>(a => a.Id)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         private static void configurePublisherTable(ModelBuilder modelBuilder)
@@ -71,13 +121,13 @@ namespace BookLab.Infrastructure
                 .HasColumnType("date");
 
             modelBuilder.Entity<Publisher>()
-                .HasOne(a => a.UserCreated)
+                .HasOne(a => a.AdminCreated)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Publisher>()
-                .HasOne(a => a.UserUpdated)
+                .HasOne(a => a.AdminUpdated)
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -97,13 +147,13 @@ namespace BookLab.Infrastructure
                 .HasMaxLength(20);
 
             modelBuilder.Entity<OrderStatus>()
-                .HasOne(a => a.UserCreated)
+                .HasOne(a => a.AdminCreated)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OrderStatus>()
-                .HasOne(a => a.UserUpdated)
+                .HasOne(a => a.AdminUpdated)
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -116,13 +166,13 @@ namespace BookLab.Infrastructure
                 .HasMaxLength(20);
 
             modelBuilder.Entity<CartStatus>()
-                .HasOne(a => a.UserCreated)
+                .HasOne(a => a.AdminCreated)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CartStatus>()
-                .HasOne(a => a.UserUpdated)
+                .HasOne(a => a.AdminUpdated)
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -135,13 +185,13 @@ namespace BookLab.Infrastructure
                 .HasMaxLength(20);
 
             modelBuilder.Entity<Role>()
-                .HasOne(a => a.UserCreated)
+                .HasOne(a => a.AdminCreated)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Role>()
-                .HasOne(a => a.UserUpdated)
+                .HasOne(a => a.AdminUpdated)
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -154,13 +204,13 @@ namespace BookLab.Infrastructure
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Category>()
-                .HasOne(a => a.UserCreated)
+                .HasOne(a => a.AdminCreated)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Category>()
-                .HasOne(a => a.UserUpdated)
+                .HasOne(a => a.AdminUpdated)
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -172,13 +222,13 @@ namespace BookLab.Infrastructure
                 discount.ToTable(d => d.HasCheckConstraint("CK_Discount_DiscountPercentage", "[DiscountPercentage] <= 100")));
 
             modelBuilder.Entity<Discount>()
-                .HasOne(a => a.UserCreated)
+                .HasOne(a => a.AdminCreated)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Discount>()
-                .HasOne(a => a.UserUpdated)
+                .HasOne(a => a.AdminUpdated)
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -205,14 +255,6 @@ namespace BookLab.Infrastructure
         private static void configureUserTable(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .Property(u => u.FirstName)
-                .HasMaxLength(20);
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.LastName)
-                .HasMaxLength(20);
-
-            modelBuilder.Entity<User>()
                 .Property(u => u.UserName)
                 .HasMaxLength(50);
 
@@ -223,10 +265,6 @@ namespace BookLab.Infrastructure
             modelBuilder.Entity<User>()
                 .Property(u => u.Password)
                 .HasMaxLength(20);
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.PhoneNumber)
-                .HasMaxLength(50);
         }
 
         private static void configureBookTable(ModelBuilder modelBuilder)
@@ -250,13 +288,13 @@ namespace BookLab.Infrastructure
                 .HasIndex(b => b.Title);
 
             modelBuilder.Entity<Book>()
-                .HasOne(a => a.UserCreated)
+                .HasOne(a => a.AdminCreated)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Book>()
-                .HasOne(a => a.UserUpdated)
+                .HasOne(a => a.AdminUpdated)
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -285,13 +323,13 @@ namespace BookLab.Infrastructure
                 .IncludeProperties(a => a.LastName);
 
             modelBuilder.Entity<Author>()
-                .HasOne(a => a.UserCreated)
+                .HasOne(a => a.AdminCreated)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Author>()
-                .HasOne(a => a.UserUpdated)
+                .HasOne(a => a.AdminUpdated)
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);

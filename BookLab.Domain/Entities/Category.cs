@@ -12,11 +12,11 @@
 
         public Guid CreatedBy { get; set; }
 
-        public User UserCreated { get; set; }
+        public Admin AdminCreated { get; set; }
 
         public Guid? UpdatedBy { get; set; }
 
-        public User? UserUpdated { get; set; }
+        public Admin? AdminUpdated { get; set; }
 
         public ICollection<BookCategory> Books { get; set; } = [];
     }

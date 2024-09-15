@@ -22,6 +22,31 @@ namespace BookLab.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BookLab.Domain.Entities.Admin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Admin");
+                });
+
             modelBuilder.Entity("BookLab.Domain.Entities.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -223,17 +248,17 @@ namespace BookLab.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CartStatusID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Cart");
                 });
@@ -342,6 +367,31 @@ namespace BookLab.Infrastructure.Migrations
                     b.ToTable("Category");
                 });
 
+            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customer");
+                });
+
             modelBuilder.Entity("BookLab.Domain.Entities.Discount", b =>
                 {
                     b.Property<int>("Id")
@@ -396,6 +446,9 @@ namespace BookLab.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
 
@@ -405,14 +458,11 @@ namespace BookLab.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderStatusId");
+                    b.HasIndex("CustomerId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OrderStatusId");
 
                     b.ToTable("Order");
                 });
@@ -618,25 +668,10 @@ namespace BookLab.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
@@ -656,22 +691,33 @@ namespace BookLab.Infrastructure.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("BookLab.Domain.Entities.Admin", b =>
+                {
+                    b.HasOne("BookLab.Domain.Entities.User", "User")
+                        .WithOne()
+                        .HasForeignKey("BookLab.Domain.Entities.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BookLab.Domain.Entities.Author", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "UserCreated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "UserUpdated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("UserCreated");
+                    b.Navigation("AdminCreated");
 
-                    b.Navigation("UserUpdated");
+                    b.Navigation("AdminUpdated");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.AuthorBook", b =>
@@ -695,7 +741,7 @@ namespace BookLab.Infrastructure.Migrations
 
             modelBuilder.Entity("BookLab.Domain.Entities.Book", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "UserCreated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -711,18 +757,18 @@ namespace BookLab.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "UserUpdated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.Navigation("AdminCreated");
+
+                    b.Navigation("AdminUpdated");
+
                     b.Navigation("Discount");
 
                     b.Navigation("Publisher");
-
-                    b.Navigation("UserCreated");
-
-                    b.Navigation("UserUpdated");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.BookCategory", b =>
@@ -752,15 +798,15 @@ namespace BookLab.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "User")
+                    b.HasOne("BookLab.Domain.Entities.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CartStatus");
 
-                    b.Navigation("User");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.CartItem", b =>
@@ -784,75 +830,86 @@ namespace BookLab.Infrastructure.Migrations
 
             modelBuilder.Entity("BookLab.Domain.Entities.CartStatus", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "UserCreated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "UserUpdated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("UserCreated");
+                    b.Navigation("AdminCreated");
 
-                    b.Navigation("UserUpdated");
+                    b.Navigation("AdminUpdated");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Category", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "UserCreated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "UserUpdated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("UserCreated");
+                    b.Navigation("AdminCreated");
 
-                    b.Navigation("UserUpdated");
+                    b.Navigation("AdminUpdated");
+                });
+
+            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
+                {
+                    b.HasOne("BookLab.Domain.Entities.User", "User")
+                        .WithOne()
+                        .HasForeignKey("BookLab.Domain.Entities.Customer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Discount", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "UserCreated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "UserUpdated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("UserCreated");
+                    b.Navigation("AdminCreated");
 
-                    b.Navigation("UserUpdated");
+                    b.Navigation("AdminUpdated");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("BookLab.Domain.Entities.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BookLab.Domain.Entities.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Customer");
 
                     b.Navigation("OrderStatus");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.OrderItem", b =>
@@ -868,38 +925,38 @@ namespace BookLab.Infrastructure.Migrations
 
             modelBuilder.Entity("BookLab.Domain.Entities.OrderStatus", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "UserCreated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "UserUpdated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("UserCreated");
+                    b.Navigation("AdminCreated");
 
-                    b.Navigation("UserUpdated");
+                    b.Navigation("AdminUpdated");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Publisher", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "UserCreated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "UserUpdated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("UserCreated");
+                    b.Navigation("AdminCreated");
 
-                    b.Navigation("UserUpdated");
+                    b.Navigation("AdminUpdated");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Review", b =>
@@ -910,7 +967,7 @@ namespace BookLab.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "Reviewer")
+                    b.HasOne("BookLab.Domain.Entities.Customer", "Reviewer")
                         .WithMany("Reviews")
                         .HasForeignKey("ReviewerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -923,20 +980,20 @@ namespace BookLab.Infrastructure.Migrations
 
             modelBuilder.Entity("BookLab.Domain.Entities.Role", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "UserCreated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookLab.Domain.Entities.User", "UserUpdated")
+                    b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("UserCreated");
+                    b.Navigation("AdminCreated");
 
-                    b.Navigation("UserUpdated");
+                    b.Navigation("AdminUpdated");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.User", b =>
@@ -972,6 +1029,13 @@ namespace BookLab.Infrastructure.Migrations
                     b.Navigation("Books");
                 });
 
+            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
+
+                    b.Navigation("Reviews");
+                });
+
             modelBuilder.Entity("BookLab.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -985,13 +1049,6 @@ namespace BookLab.Infrastructure.Migrations
             modelBuilder.Entity("BookLab.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("BookLab.Domain.Entities.User", b =>
-                {
-                    b.Navigation("Orders");
-
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }
