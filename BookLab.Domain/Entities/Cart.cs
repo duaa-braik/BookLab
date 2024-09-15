@@ -4,9 +4,9 @@
     {
         public Guid Id { get; set; }
 
-        public Guid UserId { get; set; }
+        public Guid CustomerId { get; set; }
 
-        public User User { get; set; }
+        public Customer Customer { get; set; }
 
         public int CartStatusID { get; set; }
 

@@ -6,7 +6,7 @@
 
         public Guid ReviewerId { get; set; }
 
-        public User Reviewer { get; set; }
+        public Customer Reviewer { get; set; }
 
         public Guid BookId { get; set; }
 
