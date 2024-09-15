@@ -195,6 +195,12 @@ namespace BookLab.Infrastructure
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Role>()
+                .HasData(
+                    new Role { Id = 1, Name = "Customer", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now, CreatedBy = null, UpdatedBy = null },
+                    new Role { Id = 2, Name = "Admin", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now, CreatedBy = null, UpdatedBy = null }
+                );
         }
 
         private static void configureCatgeoryTable(ModelBuilder modelBuilder)

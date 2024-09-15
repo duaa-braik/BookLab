@@ -631,7 +631,7 @@ namespace BookLab.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CreatedBy")
+                    b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -652,6 +652,22 @@ namespace BookLab.Infrastructure.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Role");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6049),
+                            Name = "Customer",
+                            UpdatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6058)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6060),
+                            Name = "Admin",
+                            UpdatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6060)
+                        });
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.User", b =>
@@ -983,8 +999,7 @@ namespace BookLab.Infrastructure.Migrations
                     b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
                         .WithMany()
                         .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BookLab.Domain.Entities.Admin", "AdminUpdated")
                         .WithMany()

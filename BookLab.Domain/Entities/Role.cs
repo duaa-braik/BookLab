@@ -12,9 +12,9 @@
 
         public ICollection<User> Users { get; set; } = [];
         
-        public Guid CreatedBy { get; set; }
+        public Guid? CreatedBy { get; set; }
 
-        public Admin AdminCreated { get; set; }
+        public Admin? AdminCreated { get; set; }
 
         public Guid? UpdatedBy { get; set; }
         
