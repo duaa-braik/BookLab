@@ -4,5 +4,5 @@ namespace BookLab.Application.Interfaces;
 
 public interface IAuthService
 {
-    void CreateUserAsync(CreateUserRequest request);
+    Task CreateUserAsync(CreateUserRequest request);
 }

@@ -4,20 +4,21 @@ using BookLab.Domain.Entities;
 using BookLab.Domain.Interfaces;
 using BookLab.Domain.Models;
 using Mapster;
-using MapsterMapper;
 
 namespace BookLab.Application.Services;
 
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AuthService(IUserRepository userRepository)
+    public AuthService(IUserRepository userRepository, IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public void CreateUserAsync(CreateUserRequest request)
+    public async Task CreateUserAsync(CreateUserRequest request)
     {
         var createUserModel = request.Adapt<CreateUserModel>();
 
@@ -32,6 +33,20 @@ public class AuthService : IAuthService
             CreatedAt = DateTime.Now,
         };
 
-        _userRepository.CreateUser(newUser);
+        using var transaction = _unitOfWork.BeginTransaction();
+
+        try
+        {
+            _userRepository.CreateUser(newUser);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            transaction.Commit();
+        }
+        catch (Exception)
+        {
+            transaction.Rollback();
+        }
+
     }
 }
