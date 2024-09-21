@@ -1,3 +1,4 @@
+using BookLab.API.Extensions;
 using BookLab.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BookLabDbContext>(
                 options => 
                 options.UseSqlServer(builder.Configuration["ConnectionString"]));
+
+builder.Services.AddServices();
 
 var app = builder.Build();
 
