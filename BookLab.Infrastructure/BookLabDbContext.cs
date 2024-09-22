@@ -1,4 +1,5 @@
 ﻿using BookLab.Domain.Entities;
+using BookLab.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookLab.Infrastructure
@@ -72,6 +73,8 @@ namespace BookLab.Infrastructure
             configureAdminTable(modelBuilder);
 
             configureCustomerTable(modelBuilder);
+
+            configureCartTable(modelBuilder);
         }
 
         private static void configureCustomerTable(ModelBuilder modelBuilder)
@@ -246,6 +249,8 @@ namespace BookLab.Infrastructure
         {
             modelBuilder.Entity<CartItem>(cartItem =>
                 cartItem.ToTable(ci => ci.HasCheckConstraint("CK_CartItem_Quantity", "[Quantity] <= 12")));
+
+            configureUuidGenerator<CartItem>(modelBuilder, "Id");
         }
 
         private static void configureOrderItemTable(ModelBuilder modelBuilder)
@@ -273,6 +278,8 @@ namespace BookLab.Infrastructure
             modelBuilder.Entity<User>()
                 .Property(u => u.Password)
                 .HasMaxLength(20);
+
+            configureUuidGenerator<User>(modelBuilder, "Id");
         }
 
         private static void configureBookTable(ModelBuilder modelBuilder)
@@ -306,6 +313,8 @@ namespace BookLab.Infrastructure
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            configureUuidGenerator<Book>(modelBuilder, "Id");
         }
 
         private static void configureAuthorTable(ModelBuilder modelBuilder)
@@ -341,6 +350,19 @@ namespace BookLab.Infrastructure
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private static void configureCartTable(ModelBuilder modelBuilder)
+        {
+            configureUuidGenerator<Cart>(modelBuilder, "Id");
+        }
+
+        private static void configureUuidGenerator<TEntity>(ModelBuilder modelBuilder, string propertyName) where TEntity : class
+        {
+            modelBuilder.Entity<TEntity>()
+                .Property(propertyName)
+                .HasValueGenerator<UuidGenerator>()
+                .ValueGeneratedOnAdd();
         }
     }
 }

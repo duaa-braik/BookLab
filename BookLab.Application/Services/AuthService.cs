@@ -35,7 +35,6 @@ public class AuthService : IAuthService
 
         var newUser = new User
         {
-            Id = Guid.NewGuid(),
             Email = createUserModel.Email,
             UserName = createUserModel.UserName,
             Password = createUserModel.Password,
