@@ -12,6 +12,7 @@ namespace BookLab.API.Extensions
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
             return services;
         }

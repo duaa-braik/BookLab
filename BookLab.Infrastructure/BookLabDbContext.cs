@@ -11,6 +11,8 @@ namespace BookLab.Infrastructure
 
         public DbSet<Customer> Customer { get; set; }
 
+        public DbSet<Role> Role { get; set; }
+
         public DbSet<Book> Book { get; set; }
 
         public DbSet<Author> Author { get; set; }
