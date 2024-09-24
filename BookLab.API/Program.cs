@@ -17,6 +17,8 @@ builder.Services.AddDbContext<BookLabDbContext>(
 
 builder.Services.AddServices();
 
+builder.Services.AddFluentValidation();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
