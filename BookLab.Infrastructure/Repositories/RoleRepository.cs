@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BookLab.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookLab.Infrastructure.Repositories;
 
@@ -11,11 +12,11 @@ public class RoleRepository : IRoleRepository
         _context = context;
     }
 
-    public async Task<int> GetRoleIdByName(string roleName)
+    public async Task<GetRoleModel> GetRoleByName(string roleName)
     {
         return await _context.Role
             .Where(r => r.Name == roleName)
-            .Select(r => r.Id)
+            .Select(r => new GetRoleModel { Id = r.Id, Name = r.Name })
             .FirstOrDefaultAsync();
     }
 }

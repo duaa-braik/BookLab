@@ -35,14 +35,14 @@ public class AuthService : IAuthService
 
         createUserModel.Password = _passwordHasher.Hash(request.Password);
 
-        var roleId = await _roleRepository.GetRoleIdByName(createUserModel.Role);
+        var role = await _roleRepository.GetRoleByName(createUserModel.Role);
 
         var newUser = new User
         {
             Email = createUserModel.Email,
             UserName = createUserModel.UserName,
             Password = createUserModel.Password,
-            RoleId = roleId,
+            RoleId = role.Id,
             CreatedAt = DateTime.Now,
         };
 
