@@ -13,16 +13,18 @@ public class AuthService : IAuthService
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRoleRepository _roleRepository;
+    private readonly IPasswordHasher _passwordHasher;
 
     public AuthService(
         IUserRepository userRepository, 
         IRoleRepository roleRepository, 
+        IPasswordHasher passwordHasher,
         IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
         _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
-
+        _passwordHasher = passwordHasher;
     }
 
     public async Task CreateUserAsync(CreateUserRequest request)
@@ -30,6 +32,8 @@ public class AuthService : IAuthService
         var createUserModel = request.Adapt<CreateUserModel>();
 
         createUserModel.UserName = createUserModel.Email.Split('@')[0];
+
+        createUserModel.Password = _passwordHasher.Hash(request.Password);
 
         var roleId = await _roleRepository.GetRoleIdByName(createUserModel.Role);
 

@@ -652,22 +652,6 @@ namespace BookLab.Infrastructure.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Role");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6049),
-                            Name = "Customer",
-                            UpdatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6058)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6060),
-                            Name = "Admin",
-                            UpdatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6060)
-                        });
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.User", b =>
@@ -686,8 +670,8 @@ namespace BookLab.Infrastructure.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");

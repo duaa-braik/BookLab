@@ -277,7 +277,7 @@ namespace BookLab.Infrastructure
 
             modelBuilder.Entity<User>()
                 .Property(u => u.Password)
-                .HasMaxLength(20);
+                .HasMaxLength(255);
 
             configureUuidGenerator<User>(modelBuilder, "Id");
         }
