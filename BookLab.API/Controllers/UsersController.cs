@@ -1,5 +1,7 @@
 ﻿using BookLab.API.Dtos;
+using BookLab.Application.Dtos;
 using BookLab.Application.Interfaces;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLab.API.Controllers
@@ -21,8 +23,11 @@ namespace BookLab.API.Controllers
         [ActionName("SignUp")]
         public async Task<ActionResult> SignUp(CreateUserRequest request)
         {            
-            await _authService.CreateUserAsync(request);
-            return Ok();
+            var createdUser = await _authService.CreateUserAsync(request);
+
+            var userDto = createdUser.Adapt<CreateUserResponse>();
+
+            return Ok(userDto);
         }
     }
 }

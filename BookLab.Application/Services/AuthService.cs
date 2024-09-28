@@ -27,7 +27,7 @@ public class AuthService : IAuthService
         _passwordHasher = passwordHasher;
     }
 
-    public async Task CreateUserAsync(CreateUserRequest request)
+    public async Task<CreateUserResponseModel> CreateUserAsync(CreateUserRequest request)
     {
         var createUserModel = request.Adapt<CreateUserModel>();
 
@@ -48,6 +48,12 @@ public class AuthService : IAuthService
             await _unitOfWork.SaveChangesAsync();
 
             transaction.Commit();
+
+            var createdUser = newUser.Adapt<CreateUserResponseModel>();
+
+            createdUser.Role = role.Name;
+
+            return createdUser;
         }
         catch (Exception)
         {
