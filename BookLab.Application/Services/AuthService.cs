@@ -35,21 +35,14 @@ public class AuthService : IAuthService
 
         createUserModel.Password = _passwordHasher.Hash(request.Password);
 
-        var role = await _roleRepository.GetRoleByName(createUserModel.Role);
-
-        var newUser = new User
-        {
-            Email = createUserModel.Email,
-            UserName = createUserModel.UserName,
-            Password = createUserModel.Password,
-            RoleId = role.Id,
-            CreatedAt = DateTime.Now,
-        };
-
         using var transaction = _unitOfWork.BeginTransaction();
 
         try
         {
+            var role = await _roleRepository.GetRoleByName(createUserModel.Role);
+
+            User newUser = createUserEntity(createUserModel, role);
+
             _userRepository.CreateUser(newUser);
 
             await _unitOfWork.SaveChangesAsync();
@@ -59,7 +52,20 @@ public class AuthService : IAuthService
         catch (Exception)
         {
             transaction.Rollback();
+            throw;
         }
 
+    }
+
+    private static User createUserEntity(CreateUserModel createUserModel, GetRoleModel role)
+    {
+        return new User
+        {
+            Email = createUserModel.Email,
+            UserName = createUserModel.UserName,
+            Password = createUserModel.Password,
+            RoleId = role.Id,
+            CreatedAt = DateTime.Now,
+        };
     }
 }
