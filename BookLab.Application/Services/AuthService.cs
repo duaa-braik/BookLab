@@ -1,6 +1,8 @@
 ﻿using BookLab.API.Dtos;
 using BookLab.Application.Interfaces;
+using BookLab.Domain.Constants;
 using BookLab.Domain.Entities;
+using BookLab.Domain.Exceptions;
 using BookLab.Domain.Interfaces;
 using BookLab.Domain.Models;
 using BookLab.Infrastructure.Repositories;
@@ -41,6 +43,15 @@ public class AuthService : IAuthService
         {
             var role = await _roleRepository.GetRoleByName(createUserModel.Role);
 
+            if(role == null)
+            {
+                string errorCode = ErrorConstants.ROLE_NOT_FOUND;
+
+                var error = new ErrorModel { Message = ErrorConstants.Errors[errorCode], ErrorCode = errorCode };
+
+                throw new NotFoundException(error);
+            }
+
             User newUser = createUserEntity(createUserModel, role);
 
             _userRepository.CreateUser(newUser);
@@ -60,7 +71,6 @@ public class AuthService : IAuthService
             transaction.Rollback();
             throw;
         }
-
     }
 
     private static User createUserEntity(CreateUserModel createUserModel, GetRoleModel role)
