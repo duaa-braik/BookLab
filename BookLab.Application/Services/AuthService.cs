@@ -33,30 +33,15 @@ public class AuthService : IAuthService
     {
         var createUserModel = request.Adapt<CreateUserModel>();
 
-        createUserModel.UserName = createUserModel.Email.Split('@')[0];
-
-        createUserModel.Password = _passwordHasher.Hash(request.Password);
+        setUsernameAndPassword(request, createUserModel);
 
         using var transaction = _unitOfWork.BeginTransaction();
 
         try
         {
-            var role = await _roleRepository.GetRoleByName(createUserModel.Role);
+            var role = await getRoleOrThrow(createUserModel);
 
-            if(role == null)
-            {
-                string errorCode = ErrorConstants.ROLE_NOT_FOUND;
-
-                var error = new ErrorModel { Message = ErrorConstants.Errors[errorCode], ErrorCode = errorCode };
-
-                throw new NotFoundException(error);
-            }
-
-            User newUser = createUserEntity(createUserModel, role);
-
-            _userRepository.CreateUser(newUser);
-
-            await _unitOfWork.SaveChangesAsync();
+            User newUser = await createUser(createUserModel, role.Id);
 
             transaction.Commit();
 
@@ -73,15 +58,44 @@ public class AuthService : IAuthService
         }
     }
 
-    private static User createUserEntity(CreateUserModel createUserModel, GetRoleModel role)
+    private async Task<GetRoleModel> getRoleOrThrow(CreateUserModel createUserModel)
     {
-        return new User
+        var role = await _roleRepository.GetRoleByName(createUserModel.Role);
+
+        if (role == null)
+        {
+            string errorCode = ErrorConstants.ROLE_NOT_FOUND;
+
+            var error = new ErrorModel { Message = ErrorConstants.Errors[errorCode], ErrorCode = errorCode };
+
+            throw new NotFoundException(error);
+        }
+
+        return role;
+    }
+
+    private void setUsernameAndPassword(CreateUserRequest request, CreateUserModel createUserModel)
+    {
+        createUserModel.UserName = createUserModel.Email.Split('@')[0];
+
+        createUserModel.Password = _passwordHasher.Hash(request.Password);
+    }
+
+    private async Task<User> createUser(CreateUserModel createUserModel, int roleId)
+    {
+        var newUser = new User
         {
             Email = createUserModel.Email,
             UserName = createUserModel.UserName,
             Password = createUserModel.Password,
-            RoleId = role.Id,
+            RoleId = roleId,
             CreatedAt = DateTime.Now,
         };
+
+        _userRepository.CreateUser(newUser);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return newUser;
     }
 }
