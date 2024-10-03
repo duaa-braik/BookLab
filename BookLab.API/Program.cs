@@ -1,4 +1,5 @@
 using BookLab.API.Extensions;
+using BookLab.API.Middlewares;
 using BookLab.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,5 +34,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.Run();
