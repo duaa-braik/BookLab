@@ -1,7 +1,9 @@
 using BookLab.API.Extensions;
 using BookLab.API.Middlewares;
 using BookLab.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,8 @@ builder.Services.AddDbContext<BookLabDbContext>(
                 options.UseSqlServer(builder.Configuration["ConnectionString"]));
 
 builder.Services.AddServices();
+
+builder.Services.ConfigureAuthentication(builder.Configuration);
 
 builder.Services.AddFluentValidation();
 
