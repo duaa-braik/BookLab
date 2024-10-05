@@ -1,5 +1,6 @@
 using BookLab.API.Extensions;
 using BookLab.API.Middlewares;
+using BookLab.Application.Configurations;
 using BookLab.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,8 @@ builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.AddFluentValidation();
 
 builder.Services.ConfigureBadRequestResponse();
+
+builder.Services.ConfigureAppSettings(builder.Configuration);
 
 var app = builder.Build();
 

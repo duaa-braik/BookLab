@@ -1,8 +1,10 @@
-﻿using BookLab.Application.Interfaces;
+﻿using BookLab.Application.Configurations;
+using BookLab.Application.Interfaces;
 using BookLab.Application.Services;
 using BookLab.Application.Utils;
 using BookLab.Domain.Interfaces;
 using BookLab.Infrastructure.Repositories;
+using Microsoft.Extensions.Options;
 
 namespace BookLab.API.Extensions
 {
@@ -15,6 +17,7 @@ namespace BookLab.API.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
 
             return services;
         }

@@ -10,6 +10,8 @@
 
         public string Role { get; set; }
 
+        public string AccessToken { get; set; }
+
         public DateTime CreatedAt { get; set; }
     }
 }
