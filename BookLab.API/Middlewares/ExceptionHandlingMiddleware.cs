@@ -38,14 +38,17 @@ public class ExceptionHandlingMiddleware
         httpContext.Response.ContentType = ERROR_RESPONSE_TYPE;
         httpContext.Response.StatusCode = statusCode;
 
-        var response = new ErrorDto
+        var error = new ErrorDto
         {
-            ErrorMessage = message,
-            ErrorCode = errorCode,
+            Message = message,
+            Code = errorCode,
         };
 
-        var responseText = JsonSerializer.Serialize(response);
+        var response = new ErrorResponseDto
+        {
+            Errors = [error]
+        };
 
-        await httpContext.Response.WriteAsync(responseText);
+        await httpContext.Response.WriteAsJsonAsync(response);
     }
 }

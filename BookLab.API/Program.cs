@@ -20,6 +20,8 @@ builder.Services.AddServices();
 
 builder.Services.AddFluentValidation();
 
+builder.Services.ConfigureBadRequestResponse();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
