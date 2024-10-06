@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static BookLab.Domain.Constants.AuthConstants;
 
 namespace BookLab.Application.Services;
 
@@ -20,14 +21,16 @@ public class TokenGeneratorService : ITokenGeneratorService
         jwtConfig = options.Value;
     }
 
-    public string Generate(CreateUserModel user)
+    public string Generate(CreateUserModel user, TokenType tokenType)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(jwtConfig.Secret);
 
+        var daysUntilExpired = Expiration[tokenType];
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Expires = DateTime.UtcNow.AddDays(1),
+            Expires = DateTime.UtcNow.AddDays(daysUntilExpired),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Subject = new ClaimsIdentity([
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

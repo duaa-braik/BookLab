@@ -8,6 +8,7 @@ using BookLab.Domain.Models;
 using BookLab.Infrastructure.Repositories;
 using Mapster;
 using static BookLab.Domain.Constants.ErrorConstants;
+using static BookLab.Domain.Constants.AuthConstants;
 
 namespace BookLab.Application.Services;
 
@@ -49,7 +50,7 @@ public class AuthService : IAuthService
 
             transaction.Commit();
 
-            var accessToken = _tokenGeneratorService.Generate(createUserModel);
+            var accessToken = _tokenGeneratorService.Generate(createUserModel, TokenType.ACCESS_TOKEN);
 
             var createdUser = newUser.Adapt<CreateUserResponseModel>();
 
@@ -73,7 +74,7 @@ public class AuthService : IAuthService
         {
             var errorCode = ErrorType.ROLE_NOT_FOUND;
 
-            var error = new ErrorModel { Message = ErrorConstants.Errors[errorCode], ErrorCode = errorCode.ToString() };
+            var error = new ErrorModel { Message = Errors[errorCode], ErrorCode = errorCode.ToString() };
 
             throw new NotFoundException(error);
         }
