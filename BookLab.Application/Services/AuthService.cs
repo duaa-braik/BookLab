@@ -7,6 +7,7 @@ using BookLab.Domain.Interfaces;
 using BookLab.Domain.Models;
 using BookLab.Infrastructure.Repositories;
 using Mapster;
+using static BookLab.Domain.Constants.ErrorConstants;
 
 namespace BookLab.Application.Services;
 
@@ -70,9 +71,9 @@ public class AuthService : IAuthService
 
         if (role == null)
         {
-            string errorCode = ErrorConstants.ROLE_NOT_FOUND;
+            var errorCode = ErrorType.ROLE_NOT_FOUND;
 
-            var error = new ErrorModel { Message = ErrorConstants.Errors[errorCode], ErrorCode = errorCode };
+            var error = new ErrorModel { Message = ErrorConstants.Errors[errorCode], ErrorCode = errorCode.ToString() };
 
             throw new NotFoundException(error);
         }
