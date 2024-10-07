@@ -654,6 +654,31 @@ namespace BookLab.Infrastructure.Migrations
                     b.ToTable("Role");
                 });
 
+            modelBuilder.Entity("BookLab.Domain.Entities.Session", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Session");
+                });
+
             modelBuilder.Entity("BookLab.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -993,6 +1018,17 @@ namespace BookLab.Infrastructure.Migrations
                     b.Navigation("AdminCreated");
 
                     b.Navigation("AdminUpdated");
+                });
+
+            modelBuilder.Entity("BookLab.Domain.Entities.Session", b =>
+                {
+                    b.HasOne("BookLab.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.User", b =>
