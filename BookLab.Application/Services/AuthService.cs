@@ -51,11 +51,13 @@ public class AuthService : IAuthService
             transaction.Commit();
 
             var accessToken = _tokenGeneratorService.Generate(createUserModel, TokenType.ACCESS_TOKEN);
+            var refreshToken = _tokenGeneratorService.Generate(createUserModel, TokenType.REFRESH_TOKEN);
 
             var createdUser = newUser.Adapt<CreateUserResponseModel>();
 
             createdUser.Role = role.Name;
             createdUser.AccessToken = accessToken;
+            createdUser.RefreshToken = refreshToken;
 
             return createdUser;
         }
