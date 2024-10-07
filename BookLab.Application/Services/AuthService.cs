@@ -50,6 +50,8 @@ public class AuthService : IAuthService
 
             transaction.Commit();
 
+            createUserModel.UserId = newUser.Id;
+
             var accessToken = _tokenGeneratorService.Generate(createUserModel, TokenType.ACCESS_TOKEN);
             var refreshToken = _tokenGeneratorService.Generate(createUserModel, TokenType.REFRESH_TOKEN);
 

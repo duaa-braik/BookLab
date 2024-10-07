@@ -39,6 +39,7 @@ public class TokenGeneratorService : ITokenGeneratorService
                 new Claim(JwtRegisteredClaimNames.Aud, jwtConfig.Audience),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("role", user.Role),
+                new Claim("userId", user.UserId.ToString()),
             ]),
         };
 
