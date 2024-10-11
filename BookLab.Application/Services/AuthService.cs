@@ -17,14 +17,14 @@ public class AuthService : IAuthService
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRoleRepository _roleRepository;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly IHashService _hashService;
     private readonly ITokenGeneratorService _tokenGeneratorService;
     private readonly ISessionService _sessionService;
 
     public AuthService(
         IUserRepository userRepository, 
         IRoleRepository roleRepository, 
-        IPasswordHasher passwordHasher,
+        IHashService hashService,
         IUnitOfWork unitOfWork,
         ITokenGeneratorService tokenGeneratorService,
         ISessionService sessionService)
@@ -32,7 +32,7 @@ public class AuthService : IAuthService
         _userRepository = userRepository;
         _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
-        _passwordHasher = passwordHasher;
+        _hashService = hashService;
         _tokenGeneratorService = tokenGeneratorService;
         _sessionService = sessionService;
     }
@@ -95,7 +95,7 @@ public class AuthService : IAuthService
     {
         createUserModel.UserName = createUserModel.Email.Split('@')[0];
 
-        createUserModel.Password = _passwordHasher.Hash(request.Password);
+        createUserModel.Password = _hashService.Hash(request.Password);
     }
 
     private async Task<User> createUser(CreateUserModel createUserModel, int roleId)
