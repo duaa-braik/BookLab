@@ -19,19 +19,22 @@ public class AuthService : IAuthService
     private readonly IRoleRepository _roleRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly ITokenGeneratorService _tokenGeneratorService;
+    private readonly ISessionService _sessionService;
 
     public AuthService(
         IUserRepository userRepository, 
         IRoleRepository roleRepository, 
         IPasswordHasher passwordHasher,
         IUnitOfWork unitOfWork,
-        ITokenGeneratorService tokenGeneratorService)
+        ITokenGeneratorService tokenGeneratorService,
+        ISessionService sessionService)
     {
         _userRepository = userRepository;
         _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
         _tokenGeneratorService = tokenGeneratorService;
+        _sessionService = sessionService;
     }
 
     public async Task<CreateUserResponseModel> CreateUserAsync(CreateUserRequest request)
@@ -48,18 +51,20 @@ public class AuthService : IAuthService
 
             User newUser = await createUser(createUserModel, role.Id);
 
-            transaction.Commit();
-
             createUserModel.UserId = newUser.Id;
 
             var accessToken = _tokenGeneratorService.Generate(createUserModel, TokenType.ACCESS_TOKEN);
             var refreshToken = _tokenGeneratorService.Generate(createUserModel, TokenType.REFRESH_TOKEN);
+
+            await _sessionService.CreateSessionAsync(newUser, refreshToken);
 
             var createdUser = newUser.Adapt<CreateUserResponseModel>();
 
             createdUser.Role = role.Name;
             createdUser.AccessToken = accessToken;
             createdUser.RefreshToken = refreshToken;
+
+            transaction.Commit();
 
             return createdUser;
         }
