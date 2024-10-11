@@ -1,6 +1,5 @@
 ﻿using BookLab.API.Dtos;
 using BookLab.Application.Interfaces;
-using BookLab.Domain.Constants;
 using BookLab.Domain.Entities;
 using BookLab.Domain.Exceptions;
 using BookLab.Domain.Interfaces;
@@ -8,7 +7,6 @@ using BookLab.Domain.Models;
 using BookLab.Infrastructure.Repositories;
 using Mapster;
 using static BookLab.Domain.Constants.ErrorConstants;
-using static BookLab.Domain.Constants.AuthConstants;
 
 namespace BookLab.Application.Services;
 
@@ -18,12 +16,11 @@ public class AuthService : IAuthService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRoleRepository _roleRepository;
     private readonly IHashService _hashService;
-    private readonly ITokenGeneratorService _tokenGeneratorService;
     private readonly ISessionService _sessionService;
 
     public AuthService(
-        IUserRepository userRepository, 
-        IRoleRepository roleRepository, 
+        IUserRepository userRepository,
+        IRoleRepository roleRepository,
         IHashService hashService,
         IUnitOfWork unitOfWork,
         ITokenGeneratorService tokenGeneratorService,
@@ -33,7 +30,6 @@ public class AuthService : IAuthService
         _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
         _hashService = hashService;
-        _tokenGeneratorService = tokenGeneratorService;
         _sessionService = sessionService;
     }
 
@@ -53,10 +49,7 @@ public class AuthService : IAuthService
 
             createUserModel.UserId = newUser.Id;
 
-            var accessToken = _tokenGeneratorService.Generate(createUserModel, TokenType.ACCESS_TOKEN);
-            var refreshToken = _tokenGeneratorService.Generate(createUserModel, TokenType.REFRESH_TOKEN);
-
-            await _sessionService.CreateSessionAsync(newUser, refreshToken);
+            var (accessToken, refreshToken) = await _sessionService.CreateSessionAsync(createUserModel);
 
             var createdUser = newUser.Adapt<CreateUserResponseModel>();
 

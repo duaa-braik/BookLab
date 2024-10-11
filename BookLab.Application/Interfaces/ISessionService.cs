@@ -1,9 +1,9 @@
-﻿using BookLab.Domain.Entities;
+﻿using BookLab.Domain.Models;
 
 namespace BookLab.Application.Interfaces
 {
     public interface ISessionService
     {
-        Task CreateSessionAsync(User user, string refreshToken);
+        Task<(string, string)> CreateSessionAsync(CreateUserModel user);
     }
 }
