@@ -1,4 +1,5 @@
 ﻿using BookLab.API.Dtos;
+using BookLab.Application.Factories;
 using BookLab.Application.Interfaces;
 using BookLab.Domain.Entities;
 using BookLab.Domain.Exceptions;
@@ -17,6 +18,7 @@ public class AuthService : IAuthService
     private readonly IRoleRepository _roleRepository;
     private readonly IHashService _hashService;
     private readonly ISessionService _sessionService;
+    private readonly IErrorFactory _errorFactory;
 
     public AuthService(
         IUserRepository userRepository,
@@ -24,13 +26,15 @@ public class AuthService : IAuthService
         IHashService hashService,
         IUnitOfWork unitOfWork,
         ITokenGeneratorService tokenGeneratorService,
-        ISessionService sessionService)
+        ISessionService sessionService,
+        IErrorFactory errorFactory)
     {
         _userRepository = userRepository;
         _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
         _hashService = hashService;
         _sessionService = sessionService;
+        _errorFactory = errorFactory;
     }
 
     public async Task<CreateUserResponseModel> CreateUserAsync(CreateUserRequest request)
@@ -76,9 +80,7 @@ public class AuthService : IAuthService
 
         if (email != null)
         {
-            var errorCode = ErrorType.ACCOUNT_EXISTS;
-
-            var error = new ErrorModel { Message = Errors[errorCode], ErrorCode = errorCode.ToString() };
+            var error = _errorFactory.Create(ErrorType.ACCOUNT_EXISTS);
 
             throw new ConflictException(error);
         }
@@ -90,9 +92,7 @@ public class AuthService : IAuthService
 
         if (role == null)
         {
-            var errorCode = ErrorType.ROLE_NOT_FOUND;
-
-            var error = new ErrorModel { Message = Errors[errorCode], ErrorCode = errorCode.ToString() };
+            var error = _errorFactory.Create(ErrorType.ROLE_NOT_FOUND);
 
             throw new NotFoundException(error);
         }

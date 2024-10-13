@@ -1,4 +1,5 @@
 ﻿using BookLab.Application.Configurations;
+using BookLab.Application.Factories;
 using BookLab.Application.Interfaces;
 using BookLab.Application.Services;
 using BookLab.Application.Utils;
@@ -20,6 +21,7 @@ namespace BookLab.API.Extensions
             services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<IErrorFactory, ErrorFactory>();
 
             return services;
         }
