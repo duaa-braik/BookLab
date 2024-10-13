@@ -31,6 +31,14 @@ public class ExceptionHandlingMiddleware
 
             await handleException(httpContext, message, errorCode, statusCode);
         }
+        catch (ConflictException ex)
+        {
+            string message = ex.Message;
+            string errorCode = ex.ErrorCode;
+            int statusCode = (int)HttpStatusCode.Conflict;
+
+            await handleException(httpContext, message, errorCode, statusCode);
+        }
     }
 
     private static async Task handleException(HttpContext httpContext, string message, string errorCode, int statusCode)

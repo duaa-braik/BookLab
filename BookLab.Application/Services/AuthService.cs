@@ -43,6 +43,8 @@ public class AuthService : IAuthService
 
         try
         {
+            await checkIfAccountAlreadyExists(createUserModel);
+
             var role = await getRoleOrThrow(createUserModel);
 
             User newUser = await createUser(createUserModel, role.Id);
@@ -65,6 +67,20 @@ public class AuthService : IAuthService
         {
             transaction.Rollback();
             throw;
+        }
+    }
+
+    private async Task checkIfAccountAlreadyExists(CreateUserModel createUserModel)
+    {
+        string? email = await _userRepository.GetUserEmailAsync(createUserModel.Email);
+
+        if (email != null)
+        {
+            var errorCode = ErrorType.ACCOUNT_EXISTS;
+
+            var error = new ErrorModel { Message = Errors[errorCode], ErrorCode = errorCode.ToString() };
+
+            throw new ConflictException(error);
         }
     }
 
