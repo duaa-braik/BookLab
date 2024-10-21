@@ -81,6 +81,8 @@ namespace BookLab.Infrastructure
 
         private static void configureCustomerTable(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Customer>().ToTable("Customer");
+
             modelBuilder.Entity<Customer>()
                 .Property(c => c.FirstName)
                 .HasMaxLength(20);
@@ -94,7 +96,7 @@ namespace BookLab.Infrastructure
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Customer>()
-                .HasOne(c => c.User)
+                .HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Customer>(c => c.Id)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -102,6 +104,8 @@ namespace BookLab.Infrastructure
 
         private static void configureAdminTable(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Admin>().ToTable("Admin");
+
             modelBuilder.Entity<Admin>()
                 .Property(a => a.FirstName)
                 .HasMaxLength(20);
@@ -115,7 +119,7 @@ namespace BookLab.Infrastructure
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Admin>()
-                .HasOne(a => a.User)
+                .HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Admin>(a => a.Id)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -269,6 +273,8 @@ namespace BookLab.Infrastructure
 
         private static void configureUserTable(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().ToTable("User");
+
             modelBuilder.Entity<User>()
                 .Property(u => u.UserName)
                 .HasMaxLength(50);
