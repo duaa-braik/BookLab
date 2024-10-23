@@ -8,6 +8,12 @@ public class AuthConstants
         REFRESH_TOKEN
     }
 
+    public enum RoleType
+    {
+        Customer,
+        Admin,
+    }
+
     public static readonly Dictionary<TokenType, double> Expiration = new()
     {
         { TokenType.ACCESS_TOKEN, 1 },

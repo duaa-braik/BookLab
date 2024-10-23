@@ -4,7 +4,7 @@ namespace BookLab.Domain.Interfaces
 {
     public interface IUserRepository
     {
-        void CreateUser(User user);
+        void CreateUser<TUser>(TUser user) where TUser : class;
 
         Task<string?> GetUserEmailAsync(string email);
     }

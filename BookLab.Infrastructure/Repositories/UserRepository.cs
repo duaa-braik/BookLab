@@ -13,9 +13,9 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public void CreateUser(User user)
+    public void CreateUser<TUser>(TUser user) where TUser : class
     {
-        _context.User.Add(user);
+        _context.Set<TUser>().Add(user);
     }
 
     public async Task<string?> GetUserEmailAsync(string email)

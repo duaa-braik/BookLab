@@ -1,5 +1,6 @@
 ﻿using BookLab.API.Dtos;
 using BookLab.Application.Factories;
+using BookLab.Application.Factories.UserFactory;
 using BookLab.Application.Interfaces;
 using BookLab.Domain.Entities;
 using BookLab.Domain.Exceptions;
@@ -49,9 +50,9 @@ public class AuthService : IAuthService
         {
             await checkIfAccountAlreadyExists(createUserModel);
 
-            var role = await getRoleOrThrow(createUserModel);
+            var role = await getRoleOrThrowAsync(createUserModel);
 
-            User newUser = await createUser(createUserModel, role.Id);
+            var newUser = await createUserAsync(role, createUserModel);
 
             createUserModel.UserId = newUser.Id;
 
@@ -86,7 +87,7 @@ public class AuthService : IAuthService
         }
     }
 
-    private async Task<GetRoleModel> getRoleOrThrow(CreateUserModel createUserModel)
+    private async Task<GetRoleModel> getRoleOrThrowAsync(CreateUserModel createUserModel)
     {
         var role = await _roleRepository.GetRoleByName(createUserModel.Role);
 
@@ -107,16 +108,9 @@ public class AuthService : IAuthService
         createUserModel.Password = _hashService.Hash(request.Password);
     }
 
-    private async Task<User> createUser(CreateUserModel createUserModel, int roleId)
+    private async Task<User> createUserAsync(GetRoleModel role, CreateUserModel createUserModel)
     {
-        var newUser = new User
-        {
-            Email = createUserModel.Email,
-            UserName = createUserModel.UserName,
-            Password = createUserModel.Password,
-            RoleId = roleId,
-            CreatedAt = DateTime.Now,
-        };
+        var newUser = UserFactory.CreateUserByRole(role, createUserModel);
 
         _userRepository.CreateUser(newUser);
 
