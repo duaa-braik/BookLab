@@ -25,7 +25,7 @@ public class SessionService : ISessionService
         _tokenGeneratorService = tokenGeneratorService;
     }
 
-    public async Task<(string, string)> CreateSessionAsync(CreateUserModel user)
+    public async Task<(string, string)> CreateSessionAsync(UserModel user)
     {
         var accessToken = _tokenGeneratorService.Generate(user, TokenType.ACCESS_TOKEN);
         var refreshToken = _tokenGeneratorService.Generate(user, TokenType.REFRESH_TOKEN);

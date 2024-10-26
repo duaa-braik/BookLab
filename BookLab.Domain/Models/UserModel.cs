@@ -1,6 +1,6 @@
 ﻿namespace BookLab.Domain.Models
 {
-    public class CreateUserModel
+    public class UserModel
     {
         public Guid UserId { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using BookLab.API.Dtos;
+using BookLab.Application.Dtos;
 using BookLab.Application.Factories;
 using BookLab.Application.Factories.UserFactory;
 using BookLab.Application.Interfaces;
@@ -26,7 +27,6 @@ public class AuthService : IAuthService
         IRoleRepository roleRepository,
         IHashService hashService,
         IUnitOfWork unitOfWork,
-        //ITokenGeneratorService tokenGeneratorService,
         ISessionService sessionService,
         IErrorFactory errorFactory)
     {
@@ -40,23 +40,23 @@ public class AuthService : IAuthService
 
     public async Task<CreateUserResponseModel> CreateUserAsync(CreateUserRequest request)
     {
-        var createUserModel = request.Adapt<CreateUserModel>();
+        var userModel = request.Adapt<UserModel>();
 
-        setUsernameAndPassword(request, createUserModel);
+        setUsernameAndPassword(request, userModel);
 
         using var transaction = _unitOfWork.BeginTransaction();
 
         try
         {
-            await checkIfAccountAlreadyExists(createUserModel);
+            await checkIfAccountAlreadyExists(userModel);
 
-            var role = await getRoleOrThrowAsync(createUserModel);
+            var role = await getRoleOrThrowAsync(userModel);
 
-            var newUser = await createUserAsync(role, createUserModel);
+            var newUser = await createUserAsync(role, userModel);
 
-            createUserModel.UserId = newUser.Id;
+            userModel.UserId = newUser.Id;
 
-            var (accessToken, refreshToken) = await _sessionService.CreateSessionAsync(createUserModel);
+            var (accessToken, refreshToken) = await _sessionService.CreateSessionAsync(userModel);
 
             var createdUser = newUser.Adapt<CreateUserResponseModel>();
 
@@ -75,9 +75,9 @@ public class AuthService : IAuthService
         }
     }
 
-    private async Task checkIfAccountAlreadyExists(CreateUserModel createUserModel)
+    private async Task checkIfAccountAlreadyExists(UserModel userModel)
     {
-        string? email = await _userRepository.GetUserEmailAsync(createUserModel.Email);
+        string? email = await _userRepository.GetUserEmailAsync(userModel.Email);
 
         if (email != null)
         {
@@ -87,9 +87,9 @@ public class AuthService : IAuthService
         }
     }
 
-    private async Task<GetRoleModel> getRoleOrThrowAsync(CreateUserModel createUserModel)
+    private async Task<GetRoleModel> getRoleOrThrowAsync(UserModel userModel)
     {
-        var role = await _roleRepository.GetRoleByName(createUserModel.Role);
+        var role = await _roleRepository.GetRoleByName(userModel.Role);
 
         if (role == null)
         {
@@ -101,16 +101,16 @@ public class AuthService : IAuthService
         return role;
     }
 
-    private void setUsernameAndPassword(CreateUserRequest request, CreateUserModel createUserModel)
+    private void setUsernameAndPassword(CreateUserRequest request, UserModel userModel)
     {
-        createUserModel.UserName = createUserModel.Email.Split('@')[0];
+        userModel.UserName = userModel.Email.Split('@')[0];
 
-        createUserModel.Password = _hashService.Hash(request.Password);
+        userModel.Password = _hashService.Hash(request.Password);
     }
 
-    private async Task<User> createUserAsync(GetRoleModel role, CreateUserModel createUserModel)
+    private async Task<User> createUserAsync(GetRoleModel role, UserModel userModel)
     {
-        var newUser = UserFactory.CreateUserByRole(role, createUserModel);
+        var newUser = UserFactory.CreateUserByRole(role, userModel);
 
         _userRepository.CreateUser(newUser);
 
