@@ -1,4 +1,5 @@
 ﻿using BookLab.Domain.Entities;
+using BookLab.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookLab.Infrastructure
@@ -10,6 +11,10 @@ namespace BookLab.Infrastructure
         public DbSet<Admin> Admin { get; set; }
 
         public DbSet<Customer> Customer { get; set; }
+
+        public DbSet<Session> Session { get; set; }
+
+        public DbSet<Role> Role { get; set; }
 
         public DbSet<Book> Book { get; set; }
 
@@ -70,10 +75,14 @@ namespace BookLab.Infrastructure
             configureAdminTable(modelBuilder);
 
             configureCustomerTable(modelBuilder);
+
+            configureCartTable(modelBuilder);
         }
 
         private static void configureCustomerTable(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Customer>().ToTable("Customer");
+
             modelBuilder.Entity<Customer>()
                 .Property(c => c.FirstName)
                 .HasMaxLength(20);
@@ -87,7 +96,7 @@ namespace BookLab.Infrastructure
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Customer>()
-                .HasOne(c => c.User)
+                .HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Customer>(c => c.Id)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -95,6 +104,8 @@ namespace BookLab.Infrastructure
 
         private static void configureAdminTable(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Admin>().ToTable("Admin");
+
             modelBuilder.Entity<Admin>()
                 .Property(a => a.FirstName)
                 .HasMaxLength(20);
@@ -108,7 +119,7 @@ namespace BookLab.Infrastructure
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Admin>()
-                .HasOne(a => a.User)
+                .HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Admin>(a => a.Id)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -244,6 +255,8 @@ namespace BookLab.Infrastructure
         {
             modelBuilder.Entity<CartItem>(cartItem =>
                 cartItem.ToTable(ci => ci.HasCheckConstraint("CK_CartItem_Quantity", "[Quantity] <= 12")));
+
+            configureUuidGenerator<CartItem>(modelBuilder, "Id");
         }
 
         private static void configureOrderItemTable(ModelBuilder modelBuilder)
@@ -260,6 +273,8 @@ namespace BookLab.Infrastructure
 
         private static void configureUserTable(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().ToTable("User");
+
             modelBuilder.Entity<User>()
                 .Property(u => u.UserName)
                 .HasMaxLength(50);
@@ -270,7 +285,9 @@ namespace BookLab.Infrastructure
 
             modelBuilder.Entity<User>()
                 .Property(u => u.Password)
-                .HasMaxLength(20);
+                .HasMaxLength(255);
+
+            configureUuidGenerator<User>(modelBuilder, "Id");
         }
 
         private static void configureBookTable(ModelBuilder modelBuilder)
@@ -304,6 +321,8 @@ namespace BookLab.Infrastructure
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            configureUuidGenerator<Book>(modelBuilder, "Id");
         }
 
         private static void configureAuthorTable(ModelBuilder modelBuilder)
@@ -339,6 +358,19 @@ namespace BookLab.Infrastructure
                 .WithMany()
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private static void configureCartTable(ModelBuilder modelBuilder)
+        {
+            configureUuidGenerator<Cart>(modelBuilder, "Id");
+        }
+
+        private static void configureUuidGenerator<TEntity>(ModelBuilder modelBuilder, string propertyName) where TEntity : class
+        {
+            modelBuilder.Entity<TEntity>()
+                .Property(propertyName)
+                .HasValueGenerator<UuidGenerator>()
+                .ValueGeneratedOnAdd();
         }
     }
 }

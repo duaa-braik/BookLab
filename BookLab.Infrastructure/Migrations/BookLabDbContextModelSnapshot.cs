@@ -28,17 +28,14 @@ namespace BookLab.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -373,17 +370,14 @@ namespace BookLab.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -652,22 +646,31 @@ namespace BookLab.Infrastructure.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Role");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6049),
-                            Name = "Customer",
-                            UpdatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6058)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6060),
-                            Name = "Admin",
-                            UpdatedAt = new DateTime(2024, 9, 15, 22, 41, 41, 184, DateTimeKind.Local).AddTicks(6060)
-                        });
+            modelBuilder.Entity("BookLab.Domain.Entities.Session", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Session");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.User", b =>
@@ -686,8 +689,8 @@ namespace BookLab.Infrastructure.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
@@ -1009,6 +1012,17 @@ namespace BookLab.Infrastructure.Migrations
                     b.Navigation("AdminCreated");
 
                     b.Navigation("AdminUpdated");
+                });
+
+            modelBuilder.Entity("BookLab.Domain.Entities.Session", b =>
+                {
+                    b.HasOne("BookLab.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.User", b =>
