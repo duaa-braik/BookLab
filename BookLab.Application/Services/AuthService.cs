@@ -26,7 +26,7 @@ public class AuthService : IAuthService
         IRoleRepository roleRepository,
         IHashService hashService,
         IUnitOfWork unitOfWork,
-        ITokenGeneratorService tokenGeneratorService,
+        //ITokenGeneratorService tokenGeneratorService,
         ISessionService sessionService,
         IErrorFactory errorFactory)
     {
