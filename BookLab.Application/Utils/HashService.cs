@@ -10,4 +10,9 @@ public class HashService : IHashService
     {
         return Bcrypt.EnhancedHashPassword(text, WORK_FACTOR);
     }
+
+    public bool Verify(string text, string hash)
+    {
+        return Bcrypt.EnhancedVerify(text, hash);
+    }
 }

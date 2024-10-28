@@ -52,17 +52,11 @@ public class AuthService : IAuthService
 
             var role = await getRoleOrThrowAsync(userModel);
 
-            var newUser = await createUserAsync(role, userModel);
+            await createUserAsync(role, userModel);
 
-            userModel.UserId = newUser.Id;
+            await createSession(userModel);
 
-            var (accessToken, refreshToken) = await _sessionService.CreateSessionAsync(userModel);
-
-            var createdUser = newUser.Adapt<CreateUserResponseModel>();
-
-            createdUser.Role = role.Name;
-            createdUser.AccessToken = accessToken;
-            createdUser.RefreshToken = refreshToken;
+            var createdUser = userModel.Adapt<CreateUserResponseModel>();
 
             transaction.Commit();
 
@@ -72,6 +66,65 @@ public class AuthService : IAuthService
         {
             transaction.Rollback();
             throw;
+        }
+    }
+
+    public async Task<LoginResponseModel> LoginUserAsync(LoginUserRequest request)
+    {
+        var transaction = _unitOfWork.BeginTransaction();
+
+        try
+        {
+            var userModel = await getUserOrThrowAsync(request.Email);
+
+            verifyPassword(request.Password, userModel.Password);
+
+            await createSession(userModel);
+
+            var response = userModel.Adapt<LoginResponseModel>();
+
+            transaction.Commit();
+
+            return response;
+        }
+        catch (Exception)
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
+    private async Task createSession(UserModel user)
+    {
+        var (accessToken, refreshToken) = await _sessionService.CreateSessionAsync(user);
+
+        user.AccessToken = accessToken;
+        user.RefreshToken = refreshToken;
+    }
+
+    public async Task<UserModel> getUserOrThrowAsync(string email)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(email);
+
+        if(user == null)
+        {
+            var error = _errorFactory.Create(ErrorType.LOGIN_FAILED);
+
+            throw new NotFoundException(error);
+        }
+
+        return user;
+    }
+
+    public void verifyPassword(string password, string hashedPassword)
+    {
+        var isCorrectPassword = _hashService.Verify(password, hashedPassword);
+
+        if (isCorrectPassword == false)
+        {
+            var error = _errorFactory.Create(ErrorType.LOGIN_FAILED);
+
+            throw new NotFoundException(error);
         }
     }
 
@@ -108,7 +161,7 @@ public class AuthService : IAuthService
         userModel.Password = _hashService.Hash(request.Password);
     }
 
-    private async Task<User> createUserAsync(GetRoleModel role, UserModel userModel)
+    private async Task createUserAsync(GetRoleModel role, UserModel userModel)
     {
         var newUser = UserFactory.CreateUserByRole(role, userModel);
 
@@ -116,6 +169,7 @@ public class AuthService : IAuthService
 
         await _unitOfWork.SaveChangesAsync();
 
-        return newUser;
+        userModel.UserId = newUser.Id;
+        userModel.Role = role.Name;
     }
 }
