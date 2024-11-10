@@ -1,4 +1,5 @@
 ﻿using BookLab.API.Dtos;
+using BookLab.Application.Dtos;
 using BookLab.Application.Factories;
 using BookLab.Application.Interfaces;
 using BookLab.Application.Services;
@@ -26,16 +27,16 @@ public class AuthServiceTests
         usersRepository = new UsersRepositoryMocks().UserRepository.Object;
         unitOfWork = new UnitOfWorkMocks().UnitOfWork.Object;
         roleRepository = new RoleRepositoryMocks().RoleRepository.Object;
-        hashService = new Mock<IHashService>().Object;
+        hashService = new HashServiceMocks().HashService.Object;
         errorFactory = new ErrorFactory();
         sessionService = new Mock<ISessionService>().Object;
 
         _uut = new AuthService
-            (usersRepository, 
-            roleRepository, 
-            hashService, 
-            unitOfWork, 
-            sessionService, 
+            (usersRepository,
+            roleRepository,
+            hashService,
+            unitOfWork,
+            sessionService,
             errorFactory);
     }
 
@@ -67,5 +68,32 @@ public class AuthServiceTests
         Assert.NotNull(newUser);
         Assert.Equal(role, newUser.Role);
         Assert.Equal("duaa", newUser.UserName);
+    }
+
+    [Fact]
+    public async void LoginUserAsync_UserDoesnotExist_ThrowNotFoundExpection()
+    {
+        var request = new LoginUserRequest { Email = "NewTest@gmail.com" };
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _uut.LoginUserAsync(request));
+    }
+
+    [Fact]
+    public async void LoginUserAsync_WrongPassword_ThrowNotFoundException()
+    {
+        var request = new LoginUserRequest { Email = "Test1@gmail.com", Password = "wrongpassword" };
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _uut.LoginUserAsync(request));
+    }
+
+    [Fact]
+    public async void LoginUserAsync_ValidCredentials_UserLoggedinSuccessfully()
+    {
+        var request = new LoginUserRequest { Email = "Test@gmail.com", Password = "somepassword" };
+
+        var resposne = await _uut.LoginUserAsync(request);
+
+        Assert.NotNull(resposne);
+        Assert.Equal("Test@gmail.com", resposne.Email);
     }
 }

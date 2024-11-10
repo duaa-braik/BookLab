@@ -16,6 +16,10 @@ public class Users
                 Email = "Test1@gmail.com",
                 Password = "somepassword",
                 RoleId = 1,
+                Role = new Role 
+                {
+                    Name = "Customer"
+                }
             },
             new Admin 
             {
@@ -24,6 +28,10 @@ public class Users
                 Email = "Test@gmail.com",
                 Password = "somepassword",
                 RoleId = 2,
+                Role = new Role 
+                {
+                    Name = "Admin"
+                }
             }
         ];
     }
