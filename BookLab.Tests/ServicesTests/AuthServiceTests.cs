@@ -22,6 +22,10 @@ public class AuthServiceTests
     private readonly IErrorFactory errorFactory;
     private readonly AuthService _uut;
 
+    private User existingAccount = new() { Email = "Test@gmail.com", Password = "somepassword" };
+    private User nonExistingAccount = new() { Email = "duaa@gmail.com", Password = "somepassword", UserName = "duaa" };
+    private string invalidRole = "test";
+
     public AuthServiceTests()
     {
         usersRepository = new UsersRepositoryMocks().UserRepository.Object;
@@ -43,7 +47,7 @@ public class AuthServiceTests
     [Fact]
     public async void CreateUserAsync_AccountAlreadyExists_ThrowConflictException()
     {
-        var request = new CreateUserRequest { Email = "Test@gmail.com" };
+        var request = new CreateUserRequest { Email = existingAccount.Email };
 
         await Assert.ThrowsAsync<ConflictException>(() => _uut.CreateUserAsync(request));
     }
@@ -51,7 +55,7 @@ public class AuthServiceTests
     [Fact]
     public async void CreateUserAsync_RoleDoesnotExist_ThrowNotFoundException()
     {
-        var request = new CreateUserRequest { Email = "duaa@gmail.com", Role = "test" };
+        var request = new CreateUserRequest { Email = nonExistingAccount.Email, Role = invalidRole };
 
         await Assert.ThrowsAsync<NotFoundException>(() => _uut.CreateUserAsync(request));
     }
@@ -61,19 +65,19 @@ public class AuthServiceTests
     [InlineData("Customer")]
     public async void CreateUserAsync_UserCreatedSuccessfully(string role)
     {
-        var request = new CreateUserRequest { Email = "duaa@gmail.com", Password = "somepassword", Role = role };
+        var request = new CreateUserRequest { Email = nonExistingAccount.Email, Password = nonExistingAccount.Password, Role = role };
 
         var newUser = await _uut.CreateUserAsync(request);
 
         Assert.NotNull(newUser);
         Assert.Equal(role, newUser.Role);
-        Assert.Equal("duaa", newUser.UserName);
+        Assert.Equal(nonExistingAccount.UserName, newUser.UserName);
     }
 
     [Fact]
     public async void LoginUserAsync_UserDoesnotExist_ThrowNotFoundExpection()
     {
-        var request = new LoginUserRequest { Email = "NewTest@gmail.com" };
+        var request = new LoginUserRequest { Email = nonExistingAccount.Email };
 
         await Assert.ThrowsAsync<NotFoundException>(() => _uut.LoginUserAsync(request));
     }
@@ -81,7 +85,7 @@ public class AuthServiceTests
     [Fact]
     public async void LoginUserAsync_WrongPassword_ThrowNotFoundException()
     {
-        var request = new LoginUserRequest { Email = "Test1@gmail.com", Password = "wrongpassword" };
+        var request = new LoginUserRequest { Email = existingAccount.Email, Password = $"{existingAccount.Password}//" };
 
         await Assert.ThrowsAsync<NotFoundException>(() => _uut.LoginUserAsync(request));
     }
@@ -89,11 +93,11 @@ public class AuthServiceTests
     [Fact]
     public async void LoginUserAsync_ValidCredentials_UserLoggedinSuccessfully()
     {
-        var request = new LoginUserRequest { Email = "Test@gmail.com", Password = "somepassword" };
+        var request = new LoginUserRequest { Email = existingAccount.Email, Password = existingAccount.Password };
 
         var resposne = await _uut.LoginUserAsync(request);
 
         Assert.NotNull(resposne);
-        Assert.Equal("Test@gmail.com", resposne.Email);
+        Assert.Equal(request.Email, resposne.Email);
     }
 }
