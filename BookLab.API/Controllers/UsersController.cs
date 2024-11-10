@@ -29,5 +29,16 @@ namespace BookLab.API.Controllers
 
             return Ok(userDto);
         }
+
+        [HttpPost("login")]
+        [ActionName("Login")]
+        public async Task<ActionResult> Login(LoginUserRequest request)
+        {
+            var user = await _authService.LoginUserAsync(request);
+
+            var userDto = user.Adapt<LoginUserResponse>();
+
+            return Ok(userDto);
+        }
     }
 }

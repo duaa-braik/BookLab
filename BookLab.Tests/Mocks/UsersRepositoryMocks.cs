@@ -1,5 +1,6 @@
 ﻿using BookLab.Domain.Entities;
 using BookLab.Domain.Interfaces;
+using BookLab.Domain.Models;
 using BookLab.Tests.MockData;
 using Moq;
 
@@ -31,6 +32,19 @@ public class UsersRepositoryMocks
             .Callback<Admin>(e =>
             {
                 _users.Add(e);
+            });
+
+        UserRepository.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync((string email) =>
+            {
+                return _users.Select(u => new UserModel
+                {
+                    UserId = u.Id,
+                    Email = u.Email,
+                    Password = u.Password,
+                    Role = u.Role.Name,
+                })
+                .FirstOrDefault(u => u.Email == email);
             });
     }
 }

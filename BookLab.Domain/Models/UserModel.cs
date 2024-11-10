@@ -1,6 +1,6 @@
 ﻿namespace BookLab.Domain.Models
 {
-    public class CreateUserModel
+    public class UserModel
     {
         public Guid UserId { get; set; }
 
@@ -11,5 +11,9 @@
         public string Password { get; set; }
 
         public string Role { get; set; }
+
+        public string AccessToken { get; set; }
+
+        public string RefreshToken { get; set; }
     }
 }

@@ -21,7 +21,7 @@ public class TokenGeneratorService : ITokenGeneratorService
         jwtConfig = options.Value;
     }
 
-    public string Generate(CreateUserModel user, TokenType tokenType)
+    public string Generate(UserModel user, TokenType tokenType)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(jwtConfig.Secret);

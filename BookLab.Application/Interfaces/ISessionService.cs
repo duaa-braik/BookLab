@@ -4,6 +4,6 @@ namespace BookLab.Application.Interfaces
 {
     public interface ISessionService
     {
-        Task<(string, string)> CreateSessionAsync(CreateUserModel user);
+        Task<(string, string)> CreateSessionAsync(UserModel user);
     }
 }

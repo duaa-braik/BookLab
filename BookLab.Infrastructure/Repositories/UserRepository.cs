@@ -1,5 +1,6 @@
 ﻿using BookLab.Domain.Entities;
 using BookLab.Domain.Interfaces;
+using BookLab.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookLab.Infrastructure.Repositories;
@@ -23,6 +24,21 @@ public class UserRepository : IUserRepository
         return await _context.User
             .Where(u => u.Email == email)
             .Select(u => u.Email)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<UserModel?> GetUserByEmailAsync(string email)
+    {
+        return await _context.User
+            .Include(u => u.Role)
+            .Where(u => u.Email == email)
+            .Select(u => new UserModel
+            {
+                UserId = u.Id,
+                Email = u.Email,
+                Password = u.Password,
+                Role = u.Role.Name,
+            })
             .FirstOrDefaultAsync();
     }
 }

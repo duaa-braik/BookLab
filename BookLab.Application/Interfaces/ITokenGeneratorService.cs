@@ -5,5 +5,5 @@ namespace BookLab.Application.Interfaces;
 
 public interface ITokenGeneratorService
 {
-    string Generate(CreateUserModel user, TokenType tokenType);
+    string Generate(UserModel user, TokenType tokenType);
 }

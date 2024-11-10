@@ -8,7 +8,7 @@ public class UserFactory
 {
     private const bool ignoreRoleTypeCase = true;
 
-    public static User CreateUserByRole(GetRoleModel role, CreateUserModel createUserModel)
+    public static User CreateUserByRole(GetRoleModel role, UserModel userModel)
     {
         Enum.TryParse(typeof(RoleType), role.Name, ignoreRoleTypeCase, out var roleType);
 
@@ -17,9 +17,9 @@ public class UserFactory
             case RoleType.Customer:
                 return new Customer
                 {
-                    Email = createUserModel.Email,
-                    UserName = createUserModel.UserName,
-                    Password = createUserModel.Password,
+                    Email = userModel.Email,
+                    UserName = userModel.UserName,
+                    Password = userModel.Password,
                     RoleId = role.Id,
                     CreatedAt = DateTime.Now,
                 };
@@ -27,9 +27,9 @@ public class UserFactory
             case RoleType.Admin:
                 return new Admin
                 {
-                    Email = createUserModel.Email,
-                    UserName = createUserModel.UserName,
-                    Password = createUserModel.Password,
+                    Email = userModel.Email,
+                    UserName = userModel.UserName,
+                    Password = userModel.Password,
                     RoleId = role.Id,
                     CreatedAt = DateTime.Now,
                 };
