@@ -11,24 +11,24 @@ public class SessionService : ISessionService
     private readonly ISessionRepository _sessionRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHashService _hashService;
-    ITokenGeneratorService _tokenGeneratorService;
+    ITokenService _tokenService;
 
     public SessionService(
         ISessionRepository sessionRepository, 
         IUnitOfWork unitOfWork,
         IHashService hashService,
-        ITokenGeneratorService tokenGeneratorService)
+        ITokenService tokenService)
     {
         _sessionRepository = sessionRepository;
         _unitOfWork = unitOfWork;
         _hashService = hashService;
-        _tokenGeneratorService = tokenGeneratorService;
+        _tokenService = tokenService;
     }
 
     public async Task<(string, string)> CreateSessionAsync(UserModel user)
     {
-        var accessToken = _tokenGeneratorService.Generate(user, TokenType.ACCESS_TOKEN);
-        var refreshToken = _tokenGeneratorService.Generate(user, TokenType.REFRESH_TOKEN);
+        var accessToken = _tokenService.Generate(user, TokenType.ACCESS_TOKEN);
+        var refreshToken = _tokenService.Generate(user, TokenType.REFRESH_TOKEN);
 
         var session = new Session
         {

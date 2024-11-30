@@ -12,11 +12,11 @@ using static BookLab.Domain.Constants.AuthConstants;
 
 namespace BookLab.Application.Services;
 
-public class TokenGeneratorService : ITokenGeneratorService
+public class TokenService : ITokenService
 {
     private readonly JwtConfig jwtConfig;
 
-    public TokenGeneratorService(IOptions<JwtConfig> options)
+    public TokenService(IOptions<JwtConfig> options)
     {
         jwtConfig = options.Value;
     }
