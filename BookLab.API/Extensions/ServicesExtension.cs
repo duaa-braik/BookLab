@@ -18,7 +18,7 @@ namespace BookLab.API.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IHashService, HashService>();
-            services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<IErrorFactory, ErrorFactory>();
