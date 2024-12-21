@@ -11,8 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using static BookLab.Domain.Constants.AuthConstants;
-using static BookLab.Domain.Constants.ErrorConstants;
-
 
 namespace BookLab.Application.Services;
 
@@ -54,7 +52,7 @@ public class TokenService : ITokenService
         return tokenHandler.WriteToken(token);
     }
 
-    public void Validate(string token)
+    public bool Validate(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -69,13 +67,20 @@ public class TokenService : ITokenService
                 ValidIssuer = jwtConfig.Issuer,
                 ValidAudience = jwtConfig.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(key)
-            }, out var validatedToken);
+            }, out var _);
+
+            return true;
         }
         catch (Exception)
         {
-            var error = _errorFactory.Create(ErrorType.INVALID_TOKEN);
-
-            throw new UnauthorizedException(error);
+            return false;
         }
+    }
+
+    public string GetClaimFromJwtToken(string token, ClaimType type)
+    {
+        var claimType = Claims[type];
+
+        return new JwtSecurityToken(token).Claims.First(c => c.Type == claimType).Value;
     }
 }

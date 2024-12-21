@@ -41,4 +41,18 @@ public class UserRepository : IUserRepository
             })
             .FirstOrDefaultAsync();
     }
+
+    public async Task<UserModel?> GetUserByUserId(Guid userId)
+    {
+        return await _context.User
+            .Include(u => u.Role)
+            .Where(u => u.Id == userId)
+            .Select(u => new UserModel
+            {
+                UserId = u.Id,
+                Email = u.Email,
+                Role = u.Role.Name,
+            })
+            .FirstOrDefaultAsync();
+    }
 }

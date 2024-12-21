@@ -6,6 +6,6 @@ namespace BookLab.Application.Interfaces;
 public interface ITokenService
 {
     string Generate(UserModel user, TokenType tokenType);
-
-    void Validate(string token);
+    string GetClaimFromJwtToken(string token, ClaimType type);
+    bool Validate(string token);
 }

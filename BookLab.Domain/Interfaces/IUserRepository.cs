@@ -7,6 +7,7 @@ namespace BookLab.Domain.Interfaces
     {
         void CreateUser<TUser>(TUser user) where TUser : class;
         Task<UserModel?> GetUserByEmailAsync(string email);
+        Task<UserModel?> GetUserByUserId(Guid userId);
         Task<string?> GetUserEmailAsync(string email);
     }
 }
