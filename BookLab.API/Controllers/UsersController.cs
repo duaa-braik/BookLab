@@ -2,6 +2,7 @@
 using BookLab.Application.Dtos;
 using BookLab.Application.Interfaces;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLab.API.Controllers
@@ -39,6 +40,18 @@ namespace BookLab.API.Controllers
             var userDto = user.Adapt<LoginUserResponse>();
 
             return Ok(userDto);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        [ActionName("Logout")]
+        public async Task<ActionResult> LogOut()
+        {
+            string token = Request.Headers.Authorization.ToString().Split(" ").Last();
+
+            await _authService.LogoutUserAsync(token);
+
+            return NoContent();
         }
     }
 }

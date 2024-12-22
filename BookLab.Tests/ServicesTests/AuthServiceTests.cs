@@ -20,6 +20,7 @@ public class AuthServiceTests
     private readonly IHashService hashService;
     private readonly ISessionService sessionService;
     private readonly IErrorFactory errorFactory;
+    private readonly ITokenService tokenService;
     private readonly AuthService _uut;
 
     private User existingAccount = new() { Email = "Test@gmail.com", Password = "somepassword" };
@@ -34,6 +35,7 @@ public class AuthServiceTests
         hashService = new HashServiceMocks().HashService.Object;
         errorFactory = new ErrorFactory();
         sessionService = new Mock<ISessionService>().Object;
+        tokenService = new Mock<ITokenService>().Object;
 
         _uut = new AuthService
             (usersRepository,
@@ -41,7 +43,8 @@ public class AuthServiceTests
             hashService,
             unitOfWork,
             sessionService,
-            errorFactory);
+            errorFactory,
+            tokenService);
     }
 
     [Fact]

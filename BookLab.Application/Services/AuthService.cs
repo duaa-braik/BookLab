@@ -9,6 +9,7 @@ using BookLab.Domain.Interfaces;
 using BookLab.Domain.Models;
 using BookLab.Infrastructure.Repositories;
 using Mapster;
+using static BookLab.Domain.Constants.AuthConstants;
 using static BookLab.Domain.Constants.ErrorConstants;
 
 namespace BookLab.Application.Services;
@@ -21,6 +22,7 @@ public class AuthService : IAuthService
     private readonly IHashService _hashService;
     private readonly ISessionService _sessionService;
     private readonly IErrorFactory _errorFactory;
+    private readonly ITokenService _tokenService;
 
     public AuthService(
         IUserRepository userRepository,
@@ -28,7 +30,8 @@ public class AuthService : IAuthService
         IHashService hashService,
         IUnitOfWork unitOfWork,
         ISessionService sessionService,
-        IErrorFactory errorFactory)
+        IErrorFactory errorFactory,
+        ITokenService tokenService)
     {
         _userRepository = userRepository;
         _roleRepository = roleRepository;
@@ -36,6 +39,7 @@ public class AuthService : IAuthService
         _hashService = hashService;
         _sessionService = sessionService;
         _errorFactory = errorFactory;
+        _tokenService = tokenService;
     }
 
     public async Task<CreateUserResponseModel> CreateUserAsync(CreateUserRequest request)
@@ -86,6 +90,39 @@ public class AuthService : IAuthService
             transaction.Commit();
 
             return response;
+        }
+        catch (Exception)
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task LogoutUserAsync(string token)
+    {
+        var userId = _tokenService.GetClaimFromJwtToken(token, ClaimType.UserId);
+
+        var transaction = _unitOfWork.BeginTransaction();
+
+        try
+        {
+            var user = await _userRepository.GetUserByUserId(new Guid(userId));
+
+            if(user == null)
+            {
+                var error = _errorFactory.Create(ErrorType.USER_NOT_FOUND);
+
+                throw new NotFoundException(error);
+            }
+
+            var session = await _sessionService.GetSessionByUserIdAsync(userId);
+
+            if (session != null)
+            {
+                await _sessionService.DeleteSessionAsync(session);
+            }
+
+            transaction.Commit();
         }
         catch (Exception)
         {
