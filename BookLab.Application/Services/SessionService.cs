@@ -80,6 +80,20 @@ public class SessionService : ISessionService
         return userModel.Adapt<SessionModel>();
     }
 
+    public async Task<Session> GetSessionByUserIdAsync(string userId)
+    {
+        return await _sessionRepository.GetSessionByUserIdAsync(new Guid(userId));
+    }
+
+    public async Task DeleteSessionAsync(Session? session)
+    {
+        if (session is null) return;
+
+        _sessionRepository.DeleteSession(session);
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
     private async Task<UserModel> updateSession(string userId, Session? session)
     {
         var user = await _userRepository.GetUserByUserId(new Guid(userId));
@@ -100,12 +114,7 @@ public class SessionService : ISessionService
 
     private async Task handleUnauthorizedUser(Session? session)
     {
-        if(session != null)
-        {
-            _sessionRepository.DeleteSession(session);
-
-            await _unitOfWork.SaveChangesAsync();
-        }
+        await DeleteSessionAsync(session);
 
         var error = _errorFactory.Create(ErrorType.INVALID_TOKEN);
 
