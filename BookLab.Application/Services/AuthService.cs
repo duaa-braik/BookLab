@@ -140,52 +140,44 @@ public class AuthService : IAuthService
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
 
-        if(user == null)
-        {
-            var error = _errorFactory.Create(ErrorType.LOGIN_FAILED);
+        if (user != null) return user;
 
-            throw new NotFoundException(error);
-        }
+        var error = _errorFactory.Create(ErrorType.LOGIN_FAILED);
 
-        return user;
+        throw new NotFoundException(error);
     }
 
     public void verifyPassword(string password, string hashedPassword)
     {
         var isCorrectPassword = _hashService.Verify(password, hashedPassword);
 
-        if (isCorrectPassword == false)
-        {
-            var error = _errorFactory.Create(ErrorType.LOGIN_FAILED);
+        if (isCorrectPassword == true) return;
 
-            throw new NotFoundException(error);
-        }
+        var error = _errorFactory.Create(ErrorType.LOGIN_FAILED);
+
+        throw new NotFoundException(error);
     }
 
     private async Task checkIfAccountAlreadyExists(UserModel userModel)
     {
         string? email = await _userRepository.GetUserEmailAsync(userModel.Email);
 
-        if (email != null)
-        {
-            var error = _errorFactory.Create(ErrorType.ACCOUNT_EXISTS);
+        if (email == null) return;
 
-            throw new ConflictException(error);
-        }
+        var error = _errorFactory.Create(ErrorType.ACCOUNT_EXISTS);
+
+        throw new ConflictException(error);
     }
 
     private async Task<GetRoleModel> getRoleOrThrowAsync(UserModel userModel)
     {
         var role = await _roleRepository.GetRoleByName(userModel.Role);
 
-        if (role == null)
-        {
-            var error = _errorFactory.Create(ErrorType.ROLE_NOT_FOUND);
+        if (role != null) return role;
 
-            throw new NotFoundException(error);
-        }
+        var error = _errorFactory.Create(ErrorType.ROLE_NOT_FOUND);
 
-        return role;
+        throw new NotFoundException(error);
     }
 
     private void setUsernameAndPassword(CreateUserRequest request, UserModel userModel)
