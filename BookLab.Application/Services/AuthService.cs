@@ -117,10 +117,7 @@ public class AuthService : IAuthService
 
             var session = await _sessionService.GetSessionByUserIdAsync(userId);
 
-            if (session != null)
-            {
-                await _sessionService.DeleteSessionAsync(session);
-            }
+            await _sessionService.DeleteSessionAsync(session);
 
             transaction.Commit();
         }
