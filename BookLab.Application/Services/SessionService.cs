@@ -63,14 +63,14 @@ public class SessionService : ISessionService
 
         bool isValidToken = _tokenService.Validate(token);
 
-        if (!isValidToken)
+        if (session == null || !isValidToken)
         {
             await handleUnauthorizedUser(session);
         }
 
         var isSameToken = _hashService.Verify(token, session.RefreshToken);
 
-        if (session == null || !isSameToken)
+        if (!isSameToken)
         {
             await handleUnauthorizedUser(session);
         }
