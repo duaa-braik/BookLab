@@ -1,4 +1,4 @@
-﻿using BookLab.Application.Dtos;
+﻿using BookLab.Application.Dtos.Session;
 using BookLab.Application.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;

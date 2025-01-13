@@ -1,4 +1,4 @@
-﻿namespace BookLab.API.Dtos
+﻿namespace BookLab.Application.Dtos.User
 {
     public class CreateUserRequest
     {

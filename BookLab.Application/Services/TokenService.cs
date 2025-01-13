@@ -1,10 +1,7 @@
-﻿using BookLab.API.Dtos;
-using BookLab.Application.Configurations;
+﻿using BookLab.Application.Configurations;
 using BookLab.Application.Factories;
 using BookLab.Application.Interfaces;
-using BookLab.Domain.Entities;
-using BookLab.Domain.Exceptions;
-using BookLab.Domain.Models;
+using BookLab.Domain.Models.User;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

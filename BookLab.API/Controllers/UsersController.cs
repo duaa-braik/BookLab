@@ -1,5 +1,4 @@
-﻿using BookLab.API.Dtos;
-using BookLab.Application.Dtos;
+﻿using BookLab.Application.Dtos.User;
 using BookLab.Application.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;

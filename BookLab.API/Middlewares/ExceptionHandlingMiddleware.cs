@@ -1,5 +1,5 @@
 ﻿
-using BookLab.Application.Dtos;
+using BookLab.Application.Dtos.Error;
 using BookLab.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Net;

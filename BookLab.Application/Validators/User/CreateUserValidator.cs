@@ -1,4 +1,4 @@
-﻿using BookLab.API.Dtos;
+﻿using BookLab.Application.Dtos.User;
 using FluentValidation;
 
 namespace BookLab.Application.Validators.User;

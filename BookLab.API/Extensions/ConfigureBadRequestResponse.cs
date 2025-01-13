@@ -1,4 +1,4 @@
-﻿using BookLab.Application.Dtos;
+﻿using BookLab.Application.Dtos.Error;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLab.API.Extensions

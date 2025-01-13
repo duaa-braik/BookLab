@@ -1,5 +1,4 @@
-﻿using BookLab.API.Dtos;
-using BookLab.Application.Dtos;
+﻿using BookLab.Application.Dtos.User;
 using BookLab.Application.Factories;
 using BookLab.Application.Factories.UserFactory;
 using BookLab.Application.Interfaces;

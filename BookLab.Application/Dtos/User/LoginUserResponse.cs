@@ -1,4 +1,4 @@
-﻿namespace BookLab.Application.Dtos;
+﻿namespace BookLab.Application.Dtos.User;
 
 public class LoginUserResponse
 {
