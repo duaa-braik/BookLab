@@ -1,5 +1,5 @@
 ﻿using BookLab.Domain.Entities;
-using BookLab.Domain.Models;
+using BookLab.Domain.Models.User;
 
 namespace BookLab.Domain.Interfaces
 {

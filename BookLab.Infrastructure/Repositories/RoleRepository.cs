@@ -1,4 +1,4 @@
-﻿using BookLab.Domain.Models;
+﻿using BookLab.Domain.Models.Role;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookLab.Infrastructure.Repositories;

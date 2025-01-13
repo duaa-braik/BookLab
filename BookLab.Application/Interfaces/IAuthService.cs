@@ -1,5 +1,5 @@
 ﻿using BookLab.Application.Dtos.User;
-using BookLab.Domain.Models;
+using BookLab.Domain.Models.User;
 
 namespace BookLab.Application.Interfaces;
 

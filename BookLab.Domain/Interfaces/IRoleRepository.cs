@@ -1,4 +1,4 @@
-﻿using BookLab.Domain.Models;
+﻿using BookLab.Domain.Models.Role;
 
 namespace BookLab.Infrastructure.Repositories;
 

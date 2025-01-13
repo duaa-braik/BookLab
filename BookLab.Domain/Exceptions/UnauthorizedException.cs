@@ -1,4 +1,4 @@
-﻿using BookLab.Domain.Models;
+﻿using BookLab.Domain.Models.Error;
 
 namespace BookLab.Domain.Exceptions
 {

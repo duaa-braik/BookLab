@@ -1,6 +1,6 @@
 ﻿using BookLab.Domain.Entities;
 using BookLab.Domain.Interfaces;
-using BookLab.Domain.Models;
+using BookLab.Domain.Models.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookLab.Infrastructure.Repositories;

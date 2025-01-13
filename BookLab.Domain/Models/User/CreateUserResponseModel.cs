@@ -1,4 +1,4 @@
-﻿namespace BookLab.Domain.Models;
+﻿namespace BookLab.Domain.Models.User;
 
 public class CreateUserResponseModel
 {

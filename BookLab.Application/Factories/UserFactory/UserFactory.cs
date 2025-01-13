@@ -1,5 +1,6 @@
 ﻿using BookLab.Domain.Entities;
-using BookLab.Domain.Models;
+using BookLab.Domain.Models.Role;
+using BookLab.Domain.Models.User;
 using static BookLab.Domain.Constants.AuthConstants;
 
 namespace BookLab.Application.Factories.UserFactory;

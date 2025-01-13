@@ -1,4 +1,4 @@
-﻿using BookLab.Domain.Models;
+﻿using BookLab.Domain.Models.Error;
 using static BookLab.Domain.Constants.ErrorConstants;
 
 namespace BookLab.Application.Factories;

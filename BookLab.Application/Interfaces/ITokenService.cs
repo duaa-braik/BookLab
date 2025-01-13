@@ -1,4 +1,4 @@
-﻿using BookLab.Domain.Models;
+﻿using BookLab.Domain.Models.User;
 using static BookLab.Domain.Constants.AuthConstants;
 
 namespace BookLab.Application.Interfaces;
