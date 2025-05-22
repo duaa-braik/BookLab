@@ -4,7 +4,10 @@ using BookLab.Application.Interfaces;
 using BookLab.Application.Services;
 using BookLab.Application.Utils;
 using BookLab.Domain.Interfaces;
+using BookLab.Domain.Repositories;
 using BookLab.Infrastructure.Repositories;
+using Mapster;
+using MapsterMapper;
 using Microsoft.Extensions.Options;
 
 namespace BookLab.API.Extensions
@@ -22,6 +25,14 @@ namespace BookLab.API.Extensions
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<IErrorFactory, ErrorFactory>();
+            services.AddScoped<IBooksService, BooksService>();
+            services.AddScoped<IBooksRepository, BooksRepository>();
+
+            var config = new TypeAdapterConfig();
+
+            services.AddSingleton(config);
+            services.AddScoped<IMapper, ServiceMapper>();
+            
 
             return services;
         }
