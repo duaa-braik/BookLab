@@ -19,7 +19,9 @@ public class BooksController : ControllerBase
     [HttpPost("books")]
     public async Task<ActionResult<CreateBookResponseDto>> CreateBook(CreateBookDto book)
     {
-        var createdBook = await _booksService.CreateBookAsync(book);
+        string adminToken = Request.Headers.Authorization.ToString().Split(" ").Last();
+
+        var createdBook = await _booksService.CreateBookAsync(book, adminToken);
 
         var createdBookDto = createdBook.Adapt<CreateBookResponseDto>();
 

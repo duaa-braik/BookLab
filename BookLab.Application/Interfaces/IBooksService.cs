@@ -5,5 +5,5 @@ namespace BookLab.Application.Interfaces;
 
 public interface IBooksService
 {
-    Task<BookModel> CreateBookAsync(CreateBookDto bookDto);
+    Task<BookModel> CreateBookAsync(CreateBookDto bookDto, string accessToken);
 }
