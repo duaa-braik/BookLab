@@ -1,5 +1,5 @@
 ﻿using BookLab.Domain.Entities;
-using BookLab.Domain.Models;
+using BookLab.Domain.Models.Role;
 using BookLab.Infrastructure.Repositories;
 using BookLab.Tests.MockData;
 using Moq;
