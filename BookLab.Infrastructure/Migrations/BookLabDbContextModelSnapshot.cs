@@ -22,28 +22,6 @@ namespace BookLab.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BookLab.Domain.Entities.Admin", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("LastName")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Admin");
-                });
-
             modelBuilder.Entity("BookLab.Domain.Entities.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -181,7 +159,7 @@ namespace BookLab.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UpdatedBy")
@@ -362,28 +340,6 @@ namespace BookLab.Infrastructure.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("LastName")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customer");
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Discount", b =>
@@ -646,6 +602,22 @@ namespace BookLab.Infrastructure.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Role");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 7, 19, 21, 23, 46, 776, DateTimeKind.Local).AddTicks(6272),
+                            Name = "Customer",
+                            UpdatedAt = new DateTime(2025, 7, 19, 21, 23, 46, 776, DateTimeKind.Local).AddTicks(6336)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 7, 19, 21, 23, 46, 776, DateTimeKind.Local).AddTicks(6342),
+                            Name = "Admin",
+                            UpdatedAt = new DateTime(2025, 7, 19, 21, 23, 46, 776, DateTimeKind.Local).AddTicks(6346)
+                        });
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Session", b =>
@@ -707,18 +679,47 @@ namespace BookLab.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Admin", b =>
                 {
-                    b.HasOne("BookLab.Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("BookLab.Domain.Entities.Admin", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("BookLab.Domain.Entities.User");
 
-                    b.Navigation("User");
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.ToTable("Admin", (string)null);
+                });
+
+            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
+                {
+                    b.HasBaseType("BookLab.Domain.Entities.User");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("BookLab.Domain.Entities.Author", b =>
@@ -883,17 +884,6 @@ namespace BookLab.Infrastructure.Migrations
                     b.Navigation("AdminUpdated");
                 });
 
-            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
-                {
-                    b.HasOne("BookLab.Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("BookLab.Domain.Entities.Customer", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("BookLab.Domain.Entities.Discount", b =>
                 {
                     b.HasOne("BookLab.Domain.Entities.Admin", "AdminCreated")
@@ -1036,6 +1026,24 @@ namespace BookLab.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("BookLab.Domain.Entities.Admin", b =>
+                {
+                    b.HasOne("BookLab.Domain.Entities.User", null)
+                        .WithOne()
+                        .HasForeignKey("BookLab.Domain.Entities.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
+                {
+                    b.HasOne("BookLab.Domain.Entities.User", null)
+                        .WithOne()
+                        .HasForeignKey("BookLab.Domain.Entities.Customer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BookLab.Domain.Entities.Author", b =>
                 {
                     b.Navigation("Books");
@@ -1058,13 +1066,6 @@ namespace BookLab.Infrastructure.Migrations
                     b.Navigation("Books");
                 });
 
-            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
-                {
-                    b.Navigation("Orders");
-
-                    b.Navigation("Reviews");
-                });
-
             modelBuilder.Entity("BookLab.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -1078,6 +1079,13 @@ namespace BookLab.Infrastructure.Migrations
             modelBuilder.Entity("BookLab.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("BookLab.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }
