@@ -1,6 +1,7 @@
 ﻿using BookLab.Application.Dtos.Book;
 using BookLab.Application.Interfaces;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookLab.API.Controllers;
@@ -16,6 +17,7 @@ public class BooksController : ControllerBase
         _booksService = booksService;
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPost("books")]
     public async Task<ActionResult<CreateBookResponseDto>> CreateBook(CreateBookDto book)
     {
