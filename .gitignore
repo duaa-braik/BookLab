@@ -2,3 +2,6 @@
 */bin
 .vs
 *.Designer.cs
+obj
+.idea
+*.user
