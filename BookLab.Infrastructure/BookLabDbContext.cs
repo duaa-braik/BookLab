@@ -302,7 +302,7 @@ namespace BookLab.Infrastructure
 
             modelBuilder.Entity<Book>()
                 .Property(e => e.ISBN)
-                .HasColumnType("varchar(13)");
+                .HasColumnType("varchar(16)");
 
             modelBuilder.Entity<Book>()
                 .HasIndex(b => b.ISBN);

@@ -136,7 +136,7 @@ namespace BookLab.Infrastructure.Migrations
 
                     b.Property<string>("ISBN")
                         .IsRequired()
-                        .HasColumnType("varchar(13)");
+                        .HasColumnType("varchar(16)");
 
                     b.Property<string>("Language")
                         .IsRequired()
